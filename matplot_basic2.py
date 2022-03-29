@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg #, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
 
 data = pd.read_csv('plotting_parameters.csv')
 
@@ -20,14 +20,6 @@ top.geometry("500x500")
 icon = PhotoImage(file="D:\\Eshwar\\documents\\af_icon.png")
 
 top.iconphoto(True,icon)
-
-"""
-m1 = Message(top,text="JS Coord").pack()
-
-m2 = Message(top,text="DAC Value").pack()
-
-m3 = Message(top,text="HPC RPM").pack()
-"""
 
 fig = Figure(figsize = (12,8),dpi = 100)
 
@@ -48,27 +40,5 @@ fig.tight_layout()
 canavas = FigureCanvasTkAgg(fig,master=top)
 canavas.draw()
 canavas.get_tk_widget().pack()
-
-"""
-    toolbar = NavigationToolbar2Tk(canavas,top)
-    toolbar.update()
-    canavas.get_tk_widget().pack()
-    plt_btn = Button(top,text="plot",height = 2,width = 4,command = Plot)
-
-    plt_btn.pack()
-    plot2 = fig.add_subplot(132)
-    plot2.set_xlabel('DAC X-value')
-    plot2.set_ylabel('DAC Y-value')
-    plot2.plot(x1,y1)
-    #plot2.legend(['blue'],loc = 'lower right')
-    plot2.set_title("DAC Values")
-
-    plot3 = fig.add_subplot(133)
-    plot3.set_xlabel('HPC-1 RPM')
-    plot3.set_ylabel('HPC-2 RPM')
-    plot3.scatter(x2,y2)
-    #plot3.legend(['blue'],loc = 'lower right')
-    plot3.set_title("HPC RPM")
-"""
 
 top.mainloop()
