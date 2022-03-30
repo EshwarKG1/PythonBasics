@@ -1,0 +1,69 @@
+from tkinter import *
+import pandas as pd 
+import math
+import tkinter.messagebox
+import matplotlib
+matplotlib.use("TkAgg")
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg #, NavigationToolbar2Tk
+
+# accessing the data using pandas
+#data = pd.read_csv('plotting_parameters.csv')
+
+# main window 
+top = Tk()
+
+w = top.winfo_screenwidth()
+h = top.winfo_screenheight()
+
+top.title("Sin function")
+
+top.geometry("%dx%d" % (w,h))
+
+top.configure(bg ='white')
+
+#top.resizable(width=False,height=False)
+
+icon = PhotoImage(file="D:\\Eshwar\\documents\\af_icon.png")
+
+top.iconphoto(True,icon)
+
+lst = []
+
+
+for theta in range(0,10000):
+    theta_in_radians = math.radians(theta)
+    x = math.sin(theta_in_radians)
+    lst.append(round(x,4))
+
+    #print(x)
+#print(lst)
+
+v = pd.DataFrame(lst,columns=["Values"])
+
+
+
+def sin_basic_function():
+    
+    #x1 = v1.loc[:,"Degree"]
+    x1 = range(0,10000)
+    y1 = lst
+    #y1 = v.loc[:,"Values"]
+    
+    fig = Figure(figsize = (9,6),dpi = 100)#,facecolor = 'violet')
+    
+    plot1 = fig.add_subplot(111)
+    plot1.set_ylabel('sin values',font ='calibri', size = 20)
+    plot1.set_xlabel('deg',font ='calibri', size = 20)
+    plot1.plot(x1,y1)
+    plot1.set_title("Sin function values",font ='calibri', size = 25)
+    plot1.set_facecolor("grey")
+
+    canavas = FigureCanvasTkAgg(fig,master=top)
+    canavas.draw()
+    canavas.get_tk_widget().place(x=350, y =70)
+
+btn3 = Button(top,text='sin function plotting',command=sin_basic_function,height = 1,width = 30,font = ('calibri',15,'bold'), fg = 'white', bg = 'grey', borderwidth = 0).place(x = 40, y = 80)
+
+top.mainloop()
