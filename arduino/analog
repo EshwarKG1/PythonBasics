@@ -1,0 +1,38 @@
+import serial
+import math
+import time 
+import matplotlib.pyplot as plt
+
+ser = serial.Serial('COM3',9600)
+time.sleep(2)
+
+values = []
+count = 0
+plt.ion()
+fig = plt.figure()
+ax = fig.add_subplot(111)
+plt.style.use('ggplot')
+
+while True:
+    try:
+        line = ser.readline()
+        if line:
+            string = line.decode()
+            num = int(string)
+            print(num)
+            values.append(num)
+            line1, = ax.plot(values,'b-')
+            line1.set_ydata(values)
+            plt.ylabel('Analog values')
+            plt.xlabel('Time')
+            plt.title('Analog values vs Time')
+            #plt.show()
+            fig.canvas.draw()
+            fig.canvas.flush_events()
+            count = count + 1
+    except KeyboardInterrupt:
+        print("Closing")
+        plt.close("all")
+        ser.close()
+        break
+    
