@@ -80,5 +80,5 @@ def onClick():
         exit()        
 
 btn = Button(top,text='Show the live plotting',command = live_plotting,height = 1,width = 30,font = ('calibri',15,'bold'), fg = 'white', bg = 'orange').place(x = 80, y = 80)
-btn1 = Button(top,text="Exit",command = onClick,bg='red',fg='white',height=1,width=30,font=('calibri',15,'bold')).place(x=80,y=250)
+btn1 = Button(top,text="Exit",command = onClick,bg='red',fg='white',height=1,width=30,font=('calibri',15,'bold')).place(x=80,y=200)
 top.mainloop()
