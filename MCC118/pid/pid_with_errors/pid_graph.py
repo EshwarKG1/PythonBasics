@@ -12,7 +12,9 @@ from scipy.interpolate import make_interp_spline
 import sys
 from daqhats import hat_list, HatIDs, mcc118
 import threading
-from pid_menu_oo import gc_values
+from pid_menu_oo import myReadValues
+from pid_menu_oo import myReadValuesB
+#print(gc_values)
 
 global channel_number,channel_number1,X,Y
 channel_number = 0
@@ -130,10 +132,8 @@ class PlotGraphClass:
                    ['Carbon Monodioxide','9.670H','38112', '5.15','8813312','6.86','2:85'],
                    ['Methylene Chloride','66.005H','253840', '34.32','54625328','42.54','3:14']]
       return
-      
-  def plotA(self):
-      global gc_values
-      X = []
+    
+  def plotA_running(self):
       figure = Figure(figsize=(15, 10))
       figure.patch.set_facecolor('#ECF0F1')  # The region our side plot get a different color
       subplot = figure.subplots()
@@ -143,61 +143,53 @@ class PlotGraphClass:
       subplot.set_title("Graph  A")
       canvas.draw()
       canvas.get_tk_widget().pack(side=TOP)
-      start_time = time.time()
       while True:
-          
-          actual_time = time.time()-start_time
-          X.append(actual_time)
-
-          subPlotHandle, = subplot.plot(X,gc_values, color='#FF6700')
-          subPlotHandle.set_data(X,gc_values)
+          #from pid_menu_oo import gc_values
+          #print(gc_values)
+          #actual_time = time.time()-start_time
+          #X.append(actual_time)
+          #print("x = ",X)
+          #print("values = ",myReadValues())  
+          subPlotHandle, = subplot.plot(myReadValues()[0],myReadValues()[1], color='#FF6700')
+          #print("values = ",myReadValues()) 
+          subPlotHandle.set_data(myReadValues()[0],myReadValues()[1])
+          #print("values = ",myReadValues()) 
           canvas.draw()
           canvas.flush_events()
-      
       return
-
-  def plotB(self,channel_number1):
-      # Step 1: Create a set of close points when ploted will give a smooth curve
-      #y = np.array(self.listOfPointsB)
-      #xlables = list(range(len(y))) 
-      #x = np.array(xlables)
-      #X, Y = SmoothPlot(x,y)
-      X = []
-      Y = []
-      
-      def values_read():
-          Y_read = board.a_in_read(channel_number1)
-          return Y_read
-              
-      def values_plot():
-          
-          figure = Figure(figsize=(15, 10))
-          figure.patch.set_facecolor('#ECF0F1')  # The region our side plot get a different color
-          subplot = figure.subplots()
-          subplot.set_facecolor("#000001") # Region inside the plot      
-          subplot.grid()
-          canvas = FigureCanvasTkAgg(figure, master=self.GraphBPopUpWindow)
-          subplot.set_title("Graph  B")
+    
+  def plotA(self):
+      myPlotA_thread = threading.Thread(target=self.plotA_running)
+      myPlotA_thread.start()
+      return
+    
+  def plotB_running(self):
+      figure = Figure(figsize=(15, 10))
+      figure.patch.set_facecolor('#ECF0F1')  # The region our side plot get a different color
+      subplot = figure.subplots()
+      subplot.set_facecolor("#000001") # Region inside the plot      
+      subplot.grid()
+      canvas = FigureCanvasTkAgg(figure, master=self.GraphBPopUpWindow)
+      subplot.set_title("Graph  B")
+      canvas.draw()
+      canvas.get_tk_widget().pack(side=TOP)
+      while True:
+          #from pid_menu_oo import gc_values
+          #print(gc_values)
+          #actual_time = time.time()-start_time
+          #X.append(actual_time)
+          #print("x = ",X)
+          #print("values = ",myReadValues())  
+          subPlotHandle, = subplot.plot(myReadValuesB()[0],myReadValuesB()[1], color='#00B5FF')
+          #print("values = ",myReadValues()) 
+          subPlotHandle.set_data(myReadValuesB()[0],myReadValuesB()[1])
+          #print("values = ",myReadValues()) 
           canvas.draw()
-          canvas.get_tk_widget().pack(side=TOP)
-          start_time = time.time()
-          while True:
-              
-              actual_time = time.time()-start_time
-              X.append(actual_time)
-              Y.append(values_read())
-              subPlotHandle, =subplot.plot(X,Y, color='#00B5FF')
-              subPlotHandle.set_data(X,Y)
-              canvas.draw()
-              canvas.flush_events()
-               
-      values_thread = threading.Thread(target=values_read)
-      plotting_thread = threading.Thread(target=values_plot)
-      
-      values_thread.start()
-      plotting_thread.start()
-
-        
+          canvas.flush_events()
+      return
+  def plotB(self):
+      myPlotB_thread = threading.Thread(target=self.plotB_running)
+      myPlotB_thread.start()
       return
 
   
@@ -299,7 +291,7 @@ class PlotGraphClass:
     #positionRight = int(self.GraphBPopUpWindow.winfo_screenwidth()/3 - windowWidth/2)
     #positionDown  = int(self.GraphBPopUpWindow.winfo_screenheight()/3 - windowHeight/2)
     #self.GraphBPopUpWindow.geometry("+{}+{}".format(positionRight, positionDown))    
-    self.plotB(channel_number1)    
+    self.plotB()    
     
   def TileHorizontalA(self):
     '''
@@ -533,4 +525,5 @@ class PlotGraphClass:
       return         
         
   
+
 
