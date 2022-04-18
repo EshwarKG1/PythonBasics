@@ -118,7 +118,14 @@ class Detector:
   def popUpWindowXPressed(self):
       self.CancelCallBack()
       return
-      
+    
+  def myOnOff(self):
+      global detector_A_flag
+      #print(self.OnOffFlag)
+      detector_flag = self.OnOffFlag.get()# == True:
+      #print("hello")
+      return detector_flag
+
   def DetectorPopUp(self):    
     #Create a Toplevel window
     if (self.popUpWindow == None):
@@ -147,7 +154,7 @@ class Detector:
     Column2 = Frame(Panel1Frame,borderwidth=4,relief=FLAT)
     Column2Row1 = Frame(Column2,borderwidth=4,relief=FLAT)
 
-    Checkbutton(Column2Row1, variable=self.OnOffFlag,text='On  / Off').pack(side=LEFT,anchor=N)
+    Checkbutton(Column2Row1, command = self.myOnOff, variable=self.OnOffFlag,text='On  / Off').pack(side=LEFT,anchor=N)
     Checkbutton(Column2Row1, variable=self.LogFlag,text='Log  ').pack(side=LEFT,anchor=N)
     
     Column2Row2 = Frame(Column2,borderwidth=4,relief=FLAT)
@@ -278,4 +285,5 @@ class Detector:
     Panel5Frame.pack(side=TOP,anchor=W)
     Panel6Frame.pack(side=TOP,anchor=S)
     return
+
 
