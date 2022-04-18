@@ -22,7 +22,10 @@ import threading
 
 channel_number = 0
 channel_number1 = 1
+x_gc = []
 gc_values = []
+x_gcB = []
+gc_valuesB = []
 
 board_list = hat_list(filter_by_id = HatIDs.ANY)
 if board_list[0].id == HatIDs.MCC_118:
@@ -523,17 +526,67 @@ def CreateHelpMenu(toplevel):
 def callback():
     return
 	
+start_time = time.time()
+def myReadValues():
+    
+    g_var = board.a_in_read(0)
+    #print(g_var)
+    gc_values.append(g_var)
+    #print(gc_values)
+    actual_time = time.time()- start_time
+    x_gc.append(actual_time)
+    return x_gc,gc_values
+
 def ReadValuesChannelA():
     global gc_values
+    #print(gc_values)
+    start_time = time.time()
     while True:
-        g_var = board.a_in_read(0)
-        gc_values.append(g_var)
+        #g_var = board.a_in_read(0)
+        #print(g_var)
+        #gc_values.append(g_var)
+        #print(gc_values)
+        myReadValues()
     return
 
+start_timeB = time.time()
+def myReadValuesB():
+    g_varB = board.a_in_read(1)
+    #print(g_var)
+    gc_valuesB.append(g_varB)
+    #print(gc_values)
+    actual_timeB = time.time()- start_timeB
+    x_gcB.append(actual_timeB)
+    return x_gcB,gc_valuesB
+
+def ReadValuesChannelB():
+    global gc_valuesB
+    #print(gc_values)
+    start_timeB = time.time()
+    while True:
+        #g_var = board.a_in_read(0)
+        #print(g_var)
+        #gc_values.append(g_var)
+        #print(gc_values)
+        myReadValuesB()
+    return
+
+
 def AcquireIconCallback():
-    values_thread = threading.Thread(target = ReadValuesChannelA)
-    values_thread.start()
-    PIDGraphObject.PopUpGraphA()
+    print(detectorAObject.myOnOff())
+    if detectorAObject.myOnOff():
+        values_thread = threading.Thread(target = ReadValuesChannelA)
+        values_thread.start()
+        PIDGraphObject.PopUpGraphA()
+    print(detectorBObject.myOnOff())
+    if detectorBObject.myOnOff():
+        values_thread_B = threading.Thread(target = ReadValuesChannelB)
+        values_thread_B.start()
+        PIDGraphObject.PopUpGraphB()
+        
+def Stopcallback():
+    PIDGraphObject.onClosingA()
+    PIDGraphObject.onClosingB()
 
 def CreateStatusBar(top):
   
@@ -591,7 +644,7 @@ def CreateIcons():
 
     stopIcon =PhotoImage(file=r'STOP.png')
     stopIcon = stopIcon.subsample(1,1)  
-    Button(IconLevelMenuBar,image = stopIcon,command = callback).pack(side=LEFT)
+    Button(IconLevelMenuBar,image = stopIcon,command = Stopcallback).pack(side=LEFT)
 
     runIcon = PhotoImage(file=r'RUN.png')
     runIcon  = runIcon.subsample(1,1)  
@@ -658,7 +711,7 @@ def GetMousePointsOfRoots(event):
         SplashFrame.destroy()
     return
 
-     
+
 
 def main():
   global root
@@ -708,3 +761,4 @@ def main():
 
 if __name__ == '__main__':
   main()
+
