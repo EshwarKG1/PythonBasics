@@ -286,3 +286,4 @@ class Detector:
     Panel6Frame.pack(side=TOP,anchor=S)
     return
 
+
