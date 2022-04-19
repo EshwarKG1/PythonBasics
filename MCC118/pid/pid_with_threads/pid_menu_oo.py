@@ -246,8 +246,7 @@ def CreateMethodMenu(toplevel):
 # Some of the call back give rise to pop ups. These popups will not be seen when Graphs/Table are show
 # So before calling any build in dialog where we do not have control over the TopLevel Attribute
 # we use wrapped to push all graphs below and once the dialog is closed the graphs comes back
-
-
+    
 def SaveIntegrationResultsWrapper():
     PIDGraphObject.PushPlotsAndTableDown()
     RunMenuRunsObject.SaveIntegrationResults()
@@ -257,12 +256,6 @@ def SaveIntegrationResultsWrapper():
 def FileOpenWrapper():
     PIDGraphObject.PushPlotsAndTableDown()
     FileMenuOptionsObject.FileMenuOpen()
-    PIDGraphObject.PushPlotsAndTableUp()
-    return
-    
-def FileSaveWrapper():
-    PIDGraphObject.PushPlotsAndTableDown()
-    FileMenuOptionsObject.FileMenuSave()
     PIDGraphObject.PushPlotsAndTableUp()
     return
 
@@ -531,7 +524,8 @@ def myReadValues():
     
     g_var = board.a_in_read(0)
     #print(g_var)
-    gc_values.append(g_var)
+    g_var1 = round(g_var,4)
+    gc_values.append(g_var1)
     #print(gc_values)
     actual_time = time.time()- start_time
     x_gc.append(actual_time)
@@ -553,7 +547,8 @@ start_timeB = time.time()
 def myReadValuesB():
     g_varB = board.a_in_read(1)
     #print(g_var)
-    gc_valuesB.append(g_varB)
+    g_varB1 = round(g_varB,4)
+    gc_valuesB.append(g_varB1)
     #print(gc_values)
     actual_timeB = time.time()- start_timeB
     x_gcB.append(actual_timeB)
@@ -571,19 +566,70 @@ def ReadValuesChannelB():
         myReadValuesB()
     return
 
+global yA_values_forSavefile,yB_values_forSavefile,A_Flag,B_Flag
+yA_values_forSavefile = []
+yB_values_forSavefile = []
+B_Flag = 0
+A_Flag = 0
 
 def AcquireIconCallback():
-    print(detectorAObject.myOnOff())
+    #print(detectorAObject.myOnOff())
+    global A_Flag,B_Flag
     if detectorAObject.myOnOff():
         values_thread = threading.Thread(target = ReadValuesChannelA)
         values_thread.start()
         PIDGraphObject.PopUpGraphA()
-    print(detectorBObject.myOnOff())
+        A_Flag = 1
+        #x_values_forSavefile.append(myReadValues()[0])
+        yA_values_forSavefile.append(myReadValues()[1])
+    #print(detectorBObject.myOnOff())
     if detectorBObject.myOnOff():
         values_thread_B = threading.Thread(target = ReadValuesChannelB)
         values_thread_B.start()
         PIDGraphObject.PopUpGraphB()
-        
+        B_Flag = 1
+        yB_values_forSavefile.append(myReadValuesB()[1])
+
+def log_function():
+    
+    my_file = FileMenuOptionsObject.filename
+    
+    if A_Flag == 1 and B_Flag == 1:
+        for item,itemB in zip(yA_values_forSavefile,yB_values_forSavefile):
+            my_file.write("Detector A,Detector B,")
+            my_file.write("\n")
+            for i,j in zip(item,itemB):
+                #print(i)
+                i = str(i)
+                my_file.write(i)
+                my_file.write(",")
+                j = str(j)
+                my_file.write(j)
+                my_file.write(",")
+                my_file.write("\n")
+    else:
+        pass
+    """
+    if B_Flag == 1:
+        for itemB in yB_values_forSavefile:
+            my_file.write("")
+            my_file.write("\n")
+            for i in itemB:
+                #print(i)
+                i = str(i)
+                my_file.write(i)
+                my_file.write(",")
+                my_file.write("\n")
+    else:
+        pass
+    """
+def FileSaveWrapper():
+    PIDGraphObject.PushPlotsAndTableDown()
+    FileMenuOptionsObject.FileMenuSave()
+    log_function()
+    PIDGraphObject.PushPlotsAndTableUp()
+    return
+
 def Stopcallback():
     PIDGraphObject.onClosingA()
     PIDGraphObject.onClosingB()
@@ -592,7 +638,10 @@ def CreateStatusBar(top):
   
         statusBar = ttk.Label(root, text="Oven=829C ,    Det 823C A:10, B:10, Flow: 0.0", relief=GROOVE, anchor=W)
         statusBar.pack(side=BOTTOM, fill=X)
-  
+
+def Loadcallback_plot():
+    PIDGraphObject.PopUpGraphAB_Cons() 
+    
 def CreateIcons():
     global newIcon
     global loadIcon
@@ -618,7 +667,7 @@ def CreateIcons():
   
     loadIcon=PhotoImage(file=r'LOAD.png')
     loadIcon=loadIcon.subsample(1,1)   
-    Button(IconLevelMenuBar,image = loadIcon,command = callback).pack(side=LEFT)
+    Button(IconLevelMenuBar,image = loadIcon,command = Loadcallback_plot).pack(side=LEFT)
 
     saveIcon=PhotoImage(file=r'SAVE.png')
     saveIcon  = saveIcon.subsample(1,1)
@@ -761,3 +810,4 @@ def main():
 
 if __name__ == '__main__':
   main()
+
