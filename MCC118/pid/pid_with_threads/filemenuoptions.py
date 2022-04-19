@@ -71,7 +71,7 @@ class FileMenuOptions:
 		   # User has pressed cancel Button
            return
 		   
-        self.SaveFileName.set(self.filename)
+        self.SaveFile.set(self.filename)
         return    
         
     def ShowFileOpenBrowser(self):
