@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 from tkinter import *
+from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo
 from tkinter import ttk
 import time
@@ -519,6 +520,9 @@ def CreateHelpMenu(toplevel):
 def callback():
     return
 	
+global startAcquire
+startAcquire = False
+
 start_time = time.time()
 def myReadValues():
     
@@ -532,15 +536,17 @@ def myReadValues():
     return x_gc,gc_values
 
 def ReadValuesChannelA():
-    global gc_values
+    global gc_values,startAcquire
     #print(gc_values)
     start_time = time.time()
-    while True:
+    while startAcquire:
         #g_var = board.a_in_read(0)
         #print(g_var)
         #gc_values.append(g_var)
         #print(gc_values)
         myReadValues()
+    print("Thread channel A exit")
+    sys.exit()
     return
 
 start_timeB = time.time()
@@ -555,15 +561,17 @@ def myReadValuesB():
     return x_gcB,gc_valuesB
 
 def ReadValuesChannelB():
-    global gc_valuesB
+    global gc_valuesB,startAcquire
     #print(gc_values)
     start_timeB = time.time()
-    while True:
+    while startAcquire:
         #g_var = board.a_in_read(0)
         #print(g_var)
         #gc_values.append(g_var)
         #print(gc_values)
         myReadValuesB()
+    print("Thread channel B exit")
+    sys.exit()
     return
 
 global yA_values_forSavefile,yB_values_forSavefile,A_Flag,B_Flag
@@ -571,24 +579,80 @@ yA_values_forSavefile = []
 yB_values_forSavefile = []
 B_Flag = 0
 A_Flag = 0
-
+"""
+class MyThread(threading.Thread):
+ 
+    # Thread class with a _stop() method.
+    # The thread itself has to check
+    # regularly for the stopped() condition.
+ 
+    def __init__(self, *args, **kwargs):
+        super(MyThread, self).__init__(*args, **kwargs)
+        self._stop = threading.Event()
+ 
+    # function using _stop function
+    def stop(self):
+        self._stop.set()
+ 
+    def stopped(self):
+        return self._stop.isSet()
+ 
+    def run(self):
+        while True:
+            if self.stopped():
+                return
+            #print("Hello, world!")
+            #time.sleep(1)
+            
 def AcquireIconCallback():
     #print(detectorAObject.myOnOff())
-    global A_Flag,B_Flag
+    global A_Flag,B_Flag,startAcquire
+    startAcquire = True
     if detectorAObject.myOnOff():
-        values_thread = threading.Thread(target = ReadValuesChannelA)
-        values_thread.start()
-        PIDGraphObject.PopUpGraphA()
-        A_Flag = 1
+        #values_thread_A = threading.Thread(target = ReadValuesChannelA)
+        th = MyThread()
+        th.start()
+        th.stop()
+        #values_thread_A.start()
+        #values_thread_A.join()
+        #PIDGraphObject.PopUpGraphA()
+        #A_Flag = 1
         #x_values_forSavefile.append(myReadValues()[0])
-        yA_values_forSavefile.append(myReadValues()[1])
+        #yA_values_forSavefile.append(myReadValues()[1])
+        #values_thread_A.join()
     #print(detectorBObject.myOnOff())
     if detectorBObject.myOnOff():
         values_thread_B = threading.Thread(target = ReadValuesChannelB)
         values_thread_B.start()
+        #values_thread_B.join()
         PIDGraphObject.PopUpGraphB()
         B_Flag = 1
         yB_values_forSavefile.append(myReadValuesB()[1])
+        #values_thread_B.join()
+"""
+def AcquireIconCallback():
+    #print(detectorAObject.myOnOff())
+    global A_Flag,B_Flag,startAcquire,values_thread_A
+    startAcquire = True
+    if detectorAObject.myOnOff():
+        values_thread_A = threading.Thread(target = ReadValuesChannelA)
+        #values_thread_A.deamon = True
+        values_thread_A.start()
+        #values_thread_A.join()
+        PIDGraphObject.PopUpGraphA()
+        A_Flag = 1
+        #x_values_forSavefile.append(myReadValues()[0])
+        yA_values_forSavefile.append(myReadValues()[1])
+        #values_thread_A.join()
+    #print(detectorBObject.myOnOff())
+    if detectorBObject.myOnOff():
+        values_thread_B = threading.Thread(target = ReadValuesChannelB)
+        values_thread_B.start()
+        #values_thread_B.join()
+        PIDGraphObject.PopUpGraphB()
+        B_Flag = 1
+        yB_values_forSavefile.append(myReadValuesB()[1])
+        #values_thread_B.join()
 
 def log_function():
     
@@ -603,6 +667,28 @@ def log_function():
                 i = str(i)
                 my_file.write(i)
                 my_file.write(",")
+                j = str(j)
+                my_file.write(j)
+                my_file.write(",")
+                my_file.write("\n")
+                
+    elif A_Flag == 1 and B_Flag == 0 :
+        for item in yA_values_forSavefile:
+            my_file.write("Detector A,")
+            my_file.write("\n")
+            for i in item:
+                #print(i)
+                i = str(i)
+                my_file.write(i)
+                my_file.write(",")
+                my_file.write("\n")
+                
+    elif A_Flag == 0 and B_Flag == 1 :
+        for itemB in yB_values_forSavefile:
+            my_file.write("Detector B,")
+            my_file.write("\n")
+            for j in itemB:
+                #print(i)
                 j = str(j)
                 my_file.write(j)
                 my_file.write(",")
@@ -631,16 +717,27 @@ def FileSaveWrapper():
     return
 
 def Stopcallback():
-    PIDGraphObject.onClosingA()
-    PIDGraphObject.onClosingB()
+    global startAcquire
+    startAcquire = False
+    print("startAcquire to false")
+    #PIDGraphObject.onClosingA()
+    #PIDGraphObject.onClosingB()
 
 def CreateStatusBar(top):
   
         statusBar = ttk.Label(root, text="Oven=829C ,    Det 823C A:10, B:10, Flow: 0.0", relief=GROOVE, anchor=W)
         statusBar.pack(side=BOTTOM, fill=X)
-
+        
+#global cons_filename
 def Loadcallback_plot():
-    PIDGraphObject.PopUpGraphAB_Cons() 
+    global cons_filename
+    cons_filename = askopenfilename()
+    #print(cons_filename)
+    #return cons_filename
+    PIDGraphObject.PopUpGraphA_Cons(cons_filename)
+   
+    #PIDGraphObject.PopUpGraphA_Cons()
+    PIDGraphObject.PopUpGraphB_Cons(cons_filename)
     
 def CreateIcons():
     global newIcon
