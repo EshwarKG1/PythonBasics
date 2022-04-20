@@ -14,6 +14,7 @@ from daqhats import hat_list, HatIDs, mcc118
 import threading
 from pid_menu_oo import myReadValues
 from pid_menu_oo import myReadValuesB
+from pid_menu_oo import Loadcallback_plot as lc
 #from pid_menu_oo import Localcallback
 #print(gc_values)
 
@@ -25,18 +26,109 @@ board_list = hat_list(filter_by_id = HatIDs.ANY)
 if board_list[0].id == HatIDs.MCC_118:
     board = mcc118(board_list[0].address)
 
-def Loadcallback():
+def LoadcallbackA(my_direc):
     a_values = []
-    b_values = []
-    dire = "/home/acufore/Eshwar/New/pid_with_threads/log_files/detectorAB.JOB"
+    dire =  my_direc # "/home/acufore/Eshwar/New/pid_with_threads/log_files/detectA.JOB" #my_direc
     with open(dire,"r") as file:
         data = file.readlines()
+        values_i = 1
+        for k in data:
+            #print(k)
+            l = k.split(",")
+            if values_i == 1:
+                l.pop(0)
+                values_i = 2
+            elif l[0] == '\n':
+                l.remove('\n')
+            else:
+                a_values.append(l[0])       
+    return a_values
+
+def LoadcallbackB(my_direc):
+    b_values = []
+    dire = my_direc #"/home/acufore/Eshwar/New/pid_with_threads/log_files/detectB.JOB"
+    with open(dire,"r") as file:
+        data = file.readlines()
+        values_i = 1
+        for k in data:
+            #print(k)
+            l = k.split(",")
+            if values_i == 1:
+                l.pop(0)
+                values_i = 2
+            elif l[0] == '\n':
+                l.remove('\n')
+            else:
+                b_values.append(l[0])       
+    return b_values
+
+def Loadcallback(my_direc):
+    a_values = []
+    b_values = []
+    only_graphAB = 0
+    dire = my_direc # "/home/acufore/Eshwar/New/pid_with_threads/log_files/working_AA.JOB"
+    with open(dire,"r") as f:
+        data = f.readlines()
         for k in data:
             l = k.split(",")
-            #print(k)
-            a_values.append(l[0])
-            b_values.append(l[1])       
-    return a_values,b_values
+            if l[0] == 'Detector A' and l[1] == 'Detector B':
+                only_graphAB = 1
+                #print("1")
+            elif l[0] == 'Detector A':
+                only_graphAB = 2
+                #print("2")
+            elif l[0] == 'Detector B':
+                only_graphAB = 3
+                #print("3")
+    if only_graphAB == 1 :
+        with open(dire,"r") as file:
+            dataAB = file.readlines()
+            valuesAB_i = 1
+            for k_AB in dataAB:
+                l_AB = k_AB.split(",")
+                #print(l[0],l[1])
+                if valuesAB_i == 1:
+                    l_AB.pop(0)
+                    l_AB.pop(0)
+                    valuesAB_i = 2
+                if l_AB[0] == '\n':
+                    l_AB.remove('\n')
+                else:
+                    a_values.append(l_AB[0])
+                    b_values.append(l_AB[1])
+        return a_values,b_values
+    elif only_graphAB == 2 :
+        with open(dire,"r") as fileA:
+            dataA = fileA.readlines()
+            valuesA_i = 1
+            for k_A in dataA:
+                #print(k)
+                l_A = k_A.split(",")
+                if valuesA_i == 1:
+                    l_A.pop(0)
+                    valuesA_i = 2
+                elif l_A[0] == '\n':
+                    l_A.remove('\n')
+                else:
+                    a_values.append(l_A[0])       
+        return a_values,b_values
+    elif only_graphAB == 3:
+        with open(dire,"r") as fileB:
+            dataB = fileB.readlines()
+            valuesB_i = 1
+            for k_B in dataB:
+                #print(k)
+                l_B = k_B.split(",")
+                if valuesB_i == 1:
+                    l_B.pop(0)
+                    valuesB_i = 2
+                elif l_B[0] == '\n':
+                    l_B.remove('\n')
+                else:
+                    b_values.append(l_B[0])       
+        return a_values,b_values
+    else:
+        return a_values,b_values
 
 def SmoothPlot(x,y):
     model = make_interp_spline(x,y)
@@ -206,16 +298,62 @@ class PlotGraphClass:
       myPlotB_thread.start()
       return
 
-  def plotAB_Cons(self):
-      x_cons_values,y_cons_values = Loadcallback()
-      print(x_cons_values)
-      figure = Figure(figsize=(15, 10))
-      figure.patch.set_facecolor('#ECF0F1')  # The region our side plot get a different color
-      subplot = figure.subplots()
-      subplot.set_facecolor("#000001") # Region inside the plot      
-      subplot.grid()
-      subplot.set_title("Graph  B")
-      subplot.plot(x_cons_values[1:],color='#00B5FF')
+  def plotA_Cons(self,cons_filename):
+      yA_cons_values = []
+      yB_cons_values = []
+      yA_cons_values,yB_cons_values = Loadcallback(cons_filename)
+      #print(yB_cons_values)
+      #yA_cons_values = LoadcallbackA(cons_filename)
+      #yA_cons_values.pop(0),yB_cons_values
+      #print(yA_cons_values[1:20])
+      if yA_cons_values != []:
+          figure = Figure(figsize=(15, 10))
+          figure.patch.set_facecolor('#ECF0F1')  # The region our side plot get a different color
+          subplot = figure.subplots()
+          subplot.set_facecolor("#000001") # Region inside the plot      
+          subplot.grid()
+          canvas = FigureCanvasTkAgg(figure, master=self.GraphAPopUpWindow)
+          subplot.set_title("Graph  A")
+          canvas.draw()
+          canvas.get_tk_widget().pack(side=TOP)
+          
+          yA_cons_valuesF = []
+          for i in range(len(yA_cons_values)):
+              yA_cons_valuesF.append(float(yA_cons_values[i]))
+          #print(yA_cons_values)
+          subplot.plot(yA_cons_valuesF,color='#FF6700')
+          #canvas.draw()
+      else:
+          #self.GraphAPopUpWindow.destroy()
+          pass
+      return
+  def plotB_Cons(self,cons_filename):
+      yA_cons_values = []
+      yB_cons_values = []
+      yA_cons_values,yB_cons_values = Loadcallback(cons_filename)
+      #print(yB_cons_values)
+      #yB_cons_values = LoadcallbackB(cons_filename)
+      if yB_cons_values != [] :
+          figure = Figure(figsize=(15, 10))
+          figure.patch.set_facecolor('#ECF0F1')  # yA_cons_values, The region our side plot get a different color
+          subplot = figure.subplots()
+          subplot.set_facecolor("#000001") # Region inside the plot      
+          subplot.grid()
+          canvas = FigureCanvasTkAgg(figure, master=self.GraphBPopUpWindow)
+          subplot.set_title("Graph  B")
+          canvas.draw()
+          canvas.get_tk_widget().pack(side=TOP)
+          
+          yB_cons_valuesF = []
+          for i in range(len(yB_cons_values)):
+              yB_cons_valuesF.append(float(yB_cons_values[i]))
+          #print(yA_cons_values)
+          subplot.plot(yB_cons_valuesF,color='#00B5FF')
+          #canvas.draw()
+      else:
+          #self.GraphBPopUpWindow.destroy()
+          pass
+      return
       
   def onClosingA(self):
       #print("Onclosing A")
@@ -240,7 +378,7 @@ class PlotGraphClass:
       
       return
 
-  def PopUpGraphAB_Cons(self):
+  def PopUpGraphA_Cons(self,cons_filename):
     #if (self.TopFrame != None):
     #    # Close the tiled charts
     #    self.TopFrame.destroy()
@@ -275,9 +413,37 @@ class PlotGraphClass:
     #self.GraphAPopUpWindow.resizable(False, False)
     self.GraphAPopUpWindow.bind('<Configure>', self.PopUpAWindowMove)
     #self.GraphAPopUpWindow.lift() 
-    self.plotAB_Cons()
+    self.plotA_Cons(cons_filename)
    
+  def PopUpGraphB_Cons(self,cons_filename):
   
+    if (self.BottomFrame != None):
+        self.BottomFrame.destroy()   
+        self.BottomFrame = None
+        
+    if (self.GraphBPopUpWindow != None):
+        # We do not want to open multiple windows of the same chart
+        return 
+    self.SetTableBData("x")    
+    self.GraphBPopUpWindow= Toplevel(self.parentWindow)
+    self.GraphBPopUpWindow.protocol("WM_DELETE_WINDOW", self.onClosingB)
+    self.GraphBPopUpWindow.geometry("592x220")
+    self.GraphBPopUpWindow.geometry(("+{0}+{1}".format((self.TopLeftRootX+5),(self.TopLeftRootY+325))))    
+    self.GraphBPopUpWindow.title("GraphB")
+    #self.GraphBPopUpWindow.transient(self.parentWindow)
+    self.GraphBPopUpWindow.attributes('-topmost',True)
+    self.GraphBPopUpWindow.bind('<Configure>', self.PopUpBWindowMove)
+    #title_bar = Frame(self.GraphBPopUpWindow, bg='red', relief='raised', bd=6)
+    #title_bar.pack(expand=1, fill=X)    
+    #print(dir(self.GraphAPopUpWindow))
+    #self.GraphBPopUpWindow.transient(self.parentWindow)
+    #windowWidth   = self.GraphBPopUpWindow.winfo_reqwidth()
+    #windowHeight  = self.GraphBPopUpWindow.winfo_reqheight()
+    #positionRight = int(self.GraphBPopUpWindow.winfo_screenwidth()/3 - windowWidth/2)
+    #positionDown  = int(self.GraphBPopUpWindow.winfo_screenheight()/3 - windowHeight/2)
+    #self.GraphBPopUpWindow.geometry("+{}+{}".format(positionRight, positionDown))    
+    self.plotB_Cons(cons_filename)
+    
   def PopUpGraphA(self):
     #if (self.TopFrame != None):
     #    # Close the tiled charts
@@ -587,4 +753,5 @@ class PlotGraphClass:
       return         
         
   
+
 
