@@ -1,0 +1,22 @@
+{
+  "Detector A": "ON",
+  "Detector B": "ON",
+  "Detector-A-Data": "/home/acufore/Eshwar/Threads/pid_exp/log_files/wed_exp5-Detector-A.csv",
+  "Detector-B-Data": "/home/acufore/Eshwar/Threads/pid_exp/log_files/wed_exp5-Detector-B.csv",
+  "Detector-A-Label": "",
+  "Detector-B-Label": "",
+  "Detector-A-Log": false,
+  "Detector-B-Log": false,
+  "Detector-A-ExternalFlag": false,
+  "Detector-B-ExternalFlag": true,
+  "Detector-A-InvertFlag": true,
+  "Detector-B-InvertFlag": false,
+  "Detector-A-Time": "02",
+  "Detector-B-Time": "10",
+  "Detector-A-Length": "10",
+  "Detector-B-Length": "5",
+  "Detector-A-Min Area": "12",
+  "Detector-B-Min Area": "1",
+  "Detector-A-Min Height": "45",
+  "Detector-B-Min Height": "2"
+}

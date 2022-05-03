@@ -1,0 +1,6 @@
+{
+  "Detector A": "ON",
+  "Detector B": "ON",
+  "Detector-A-Data": "/home/acufore/Eshwar/Threads/pid_exp/log_files/exp7-Detector-A.csv",
+  "Detector-B-Data": "/home/acufore/Eshwar/Threads/pid_exp/log_files/exp7-Detector-B.csv"
+}
