@@ -25,6 +25,7 @@ import threading
 import os
 import csv
 from threading import Lock
+from scipy.integrate import simps
 
 
 global x_gc,gc_values,x_gcB,gc_valuesB
@@ -274,8 +275,10 @@ def new_fun():
     #print(detectorAObject.myOnOff())
     #print(detectorBObject.OnOffFlag())
     return
-
-
+oneA_peak = []
+oneA_y = []
+oneB_peak = []
+oneB_y = []
 def FileOpenWrapper():
    # def FileOpenWrapper():
     PIDGraphObject.PushPlotsAndTableDown()
@@ -308,6 +311,7 @@ def FileOpenWrapper():
                 #PIDGraphObject.aY_values.append(row[1])
                 PIDGraphObject.aX_Save_values.append(row_A0)
                 PIDGraphObject.aY_Save_values.append(row_A1)
+                oneA_peak = PIDGraphObject.aY_Save_values
                 #print(PIDGraphObject.aX_values)
         PIDGraphObject.PopUpGraphA_Cons()
     else:
@@ -325,10 +329,23 @@ def FileOpenWrapper():
                 #PIDGraphObject.bY_values.append(row[1])
                 PIDGraphObject.bX_Save_values.append(row_B0)
                 PIDGraphObject.bY_Save_values.append(row_B1)
+                oneB_peak = PIDGraphObject.bY_Save_values
         PIDGraphObject.PopUpGraphB_Cons()
     else:
         pass
+    for i in oneA_peak:
+        if i>0:
+            oneA_y.append(i)
+    areaA = simps(oneA_y, dx=0.2)
+    print("area A =", areaA)
+    for i in oneB_peak:
+        if i>0:
+            oneB_y.append(i)
+    areaB = simps(oneB_y, dx=0.2)
+    print("area B =",areaB)
     return
+
+
 
 def FileSaveAsWrapper():
     PIDGraphObject.PushPlotsAndTableDown()
@@ -607,6 +624,8 @@ def myReadValues():
     if read_values:        
         g_var = board.a_in_read(2)
         g_var1 = round(g_var,6)
+        if g_var1 < 0.1:
+            g_var1 = 0
     gc_values.append(g_var1)
     actual_time = time.time()-start_time
     actual_time = round(actual_time,6)
@@ -623,6 +642,7 @@ def ReadValuesChannelA():
     start_time = time.time()
     while startAcquire:
         myReadValues()
+        time.sleep(0.2)
     PIDGraphObject.aX_plot_values = []
     PIDGraphObject.aY_plot_values = []
     return
@@ -672,6 +692,8 @@ def myReadValuesB():
     if read_values:        
         g_varB = board.a_in_read(3)
         g_varB1 = round(g_varB,6)
+        if g_varB1 < 0.1:
+            g_varB1 = 0
     gc_valuesB.append(g_varB1)
     actual_timeB = time.time()-start_timeB
     actual_timeB = round(actual_timeB,6)
@@ -688,6 +710,7 @@ def ReadValuesChannelB():
     start_timeB = time.time()
     while startAcquire:
         myReadValuesB()
+        time.sleep(0.2)
     #value_BB = 1
     PIDGraphObject.bX_plot_values = []
     PIDGraphObject.bY_plot_values = []
