@@ -18,7 +18,7 @@ from pid_menu_oo import myReadValuesB
 from pid_menu_oo import Loadcallback_plot as lc
 from pid_menu_oo import Stopcallback
 from pid_menu_oo import new_fun #ActivateAcquire
-from pid_menu_oo import curve_calculationA
+from pid_menu_oo import CalculatePeakAreaAndHeight
 import json
 import os
 from scipy import integrate
@@ -114,15 +114,22 @@ class PlotGraphClass:
   def SetTableAData(self,data):
       self.TableAData =[]
       self.table_list = []
-      calculating_curve = curve_calculationA(self.aX_Save_values,self.aY_Save_values)
+      calculating_curve = CalculatePeakAreaAndHeight(self.aX_Save_values,self.aY_Save_values)
       for i in range(len(calculating_curve)):
           list_calculate = list(calculating_curve[i].items())
+          # Compound Name
           self.table_list.append(list_calculate[4][1])
+          # Concentration default values 
           self.table_list.append(0)
+          # Peak height
           self.table_list.append(list_calculate[1][1])
+          # percentage default
           self.table_list.append(0)
+          # Peak area
           self.table_list.append(list_calculate[2][1])
+          # percentage default
           self.table_list.append(0)
+          # Retention time
           self.table_list.append(list_calculate[3][1])
           #print(list_calculate[1])
           #print(list_calculate[2])
@@ -141,27 +148,26 @@ class PlotGraphClass:
   def SetTableBData(self,data):
       self.TableBData =[]
       self.table_list = []
-      calculating_curve = curve_calculationA(self.bX_Save_values,self.bY_Save_values)
+      calculating_curve = CalculatePeakAreaAndHeight(self.bX_Save_values,self.bY_Save_values)
       for i in range(len(calculating_curve)):
           list_calculate = list(calculating_curve[i].items())
+          # Compound Name
           self.table_list.append(list_calculate[4][1])
+          # Concentration default values 
           self.table_list.append(0)
+          # Peak height
           self.table_list.append(list_calculate[1][1])
+          # percentage default
           self.table_list.append(0)
+          # Peak area
           self.table_list.append(list_calculate[2][1])
+          # percentage default
           self.table_list.append(0)
+          # Retention time
           self.table_list.append(list_calculate[3][1])
-          #print(list_calculate[1])
-          #print(list_calculate[2])
-          #print(list_calculate[3])
-          #print(list_calculate[4])
           self.TableBData.append(self.table_list)
           list_calculate = []
           self.table_list = []
-      #print(self.TableAData)
-      #list_calculate = list(calculating_curve[0].items())
-      #print(list_calculate[1][0])
-      #print(calculating_curve)
       return
     
   def plotA_running(self,stopA):

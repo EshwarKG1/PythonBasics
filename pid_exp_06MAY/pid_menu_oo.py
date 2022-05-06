@@ -273,6 +273,7 @@ def new_fun():
     detectorAObject.OnOffFlag.set(False)
     detectorBObject.OnOffFlag.set(False)
     read_values = True
+    #FileMenuOptionsObject.filename = None
     #print(detectorAObject.myOnOff())
     #print(detectorBObject.OnOffFlag())
     return
@@ -359,7 +360,7 @@ def FindCompoundName(retention_time):
 def compoundPercentage():
     return
 
-def curve_calculationA(x,y):
+def CalculatePeakAreaAndHeight(x,y):
     curve_ListA = []
     data_ListA = []
     data_List_aY = []
@@ -401,37 +402,6 @@ def curve_calculationA(x,y):
         print()
     """   
     return curve_ListA
- 
-    '''
-    for i,j in zip(peak_aX,peak_aY):
-        while j!=0:
-            xy_list = []
-            xy_list.append(i)
-            xy_list.append(j)
-            peak_list.append(xy_list)
-            #print("1 - Not equal to zero",i,"time",j,"value")
-            break
-            #print("1 - Not equal to zero",i,"time",j,"value")
-        else:
-            print("Equal to zero",i,"time",j,"value")
-    print(peak_list)
-    '''
-    #areaA = simps(oneA_y, dx=0.2)
-    #print("area A =", areaA)
-    """
-    for i in oneB_peak:
-        if i>0:
-            oneB_y.append(i)
-    areaB = simps(oneB_y, dx=0.2)
-    print("area B =",areaB)
-    for i in oneA_peak:
-    if i!=0:
-        while i==0:
-            oneA_y.append(i)
-    """
-def graph_curve_calculations():
-    graph_values = curve_calculationA()
-    return graph_values
 
 def FileSaveAsWrapper():
     PIDGraphObject.PushPlotsAndTableDown()
@@ -933,6 +903,7 @@ def log_function_json():
     
     global my_stringA,my_stringB,my_string1
     my_file1 = FileMenuOptionsObject.filename
+    #print(my_file1)
     my_string1 = my_file1.name
     
     if A_Flag == 1 and B_Flag == 1:
