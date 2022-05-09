@@ -28,6 +28,9 @@ from scipy.integrate import simps
 import numpy as np
 import pandas as pd
 
+global channel_number1,channel_number2
+channel_number1 = 2
+channel_number2 = 3
 
 global x_gc,gc_values,x_gcB,gc_valuesB
 x_gc = []
@@ -678,7 +681,7 @@ def myReadValues():
         start_time = time.time()
         value_AA = 2
     if read_values:        
-        g_var = board.a_in_read(2)
+        g_var = board.a_in_read(channel_number1)
         g_var1 = round(g_var,6)
         if g_var1 < 0.1:
             g_var1 = 0
@@ -746,7 +749,7 @@ def myReadValuesB():
         start_timeB = time.time()
         value_BB = 2
     if read_values:        
-        g_varB = board.a_in_read(3)
+        g_varB = board.a_in_read(channel_number2)
         g_varB1 = round(g_varB,6)
         if g_varB1 < 0.1:
             g_varB1 = 0
