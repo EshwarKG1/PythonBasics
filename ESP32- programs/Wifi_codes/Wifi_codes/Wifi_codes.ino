@@ -1,6 +1,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
+#include "root_page.h"
+
 // SSID & Password
 const char* ssid = "Acufore-Electronics";  // Enter your SSID here
 const char* password = "Acufore@AF";  //Enter your Password here
@@ -25,7 +27,7 @@ void setup() {
   Serial.print("Got IP: ");
   Serial.println(WiFi.localIP());  //Show ESP32 IP on serial
 
-  server.on("/", handle_root);
+  server.on("/home", handle_root);
 
   server.begin();
   Serial.println("HTTP server started");
@@ -36,13 +38,6 @@ void loop() {
   server.handleClient();
 }
 
-// HTML & CSS contents which display on web server
-String HTML = "<!DOCTYPE html>\
-<html>\
-<body>\
-<h1>My First Web Server with ESP32 - Station Mode &#128522;</h1>\
-</body>\
-</html>";
 
 // Handle root url (/)
 void handle_root() {
