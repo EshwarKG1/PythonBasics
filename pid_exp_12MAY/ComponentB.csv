@@ -1,0 +1,13 @@
+Component Name,on/off,Peak RT,Windows,Resp Fact,Low Alarm,High Alarm
+vinyl chloride,Yes,2.05,0.15,1.00,0.00,0.00
+methylene chloride,Yes,2.19,0.15,1.00,0.00,0.00
+chloro propene,Yes,3.12,0.07,1.00,0.00,0.00
+Benzene,Yes,6.05,0.01,1.00,0.00,0.00
+Cis-Dichloropropene,Yes,8.17,0.01,1.00,0.00,0.00
+Trans-Dichloropropene,Yes,8.46,0.01,1.00,0.00,0.00
+Toluene,Yes,9.31,0.01,1.00,0.00,0.00
+PerChloroEthylene,Yes,10.42,0.01,1.00,0.00,0.00
+ChloroBenzene,Yes,11.50,0.01,1.00,0.00,0.00
+Tri-chloroBenzene,Yes,19.57,0.01,1.00,0.00,0.00
+,,1.56,0.01,1.00,0.00,0.00
+,,2.78,0.01,1.00,0.00,0.00
