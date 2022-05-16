@@ -32,9 +32,6 @@ void setup() {
   server.on("/mixture2", handle_mixture2);
   server.on("/mixture3", handle_mixture3);
   server.on("/mixture4", handle_mixture4);
-  server.on("/mixture5", handle_mixture5);
-  server.on("/mixture6", handle_mixture6);
-  server.on("/mixture7", handle_mixture7);
   WriteMixtureNames();
   WriteRetentionTimeFromFile();
   server.begin();
@@ -91,6 +88,8 @@ void loop() {
   server.handleClient();
 }
 
+bool flag_plot = true;
+
 void handle_mixture1(){
   server.send(200, "text/html", HTML);
   Serial.println("Name:");
@@ -99,17 +98,28 @@ void handle_mixture1(){
   Serial.println(ListofMixture[0].compounds[0]);
   Serial.println("Compound 2:");
   Serial.println(ListofMixture[0].compounds[1]);
-  //dacCurve(0,255,0,10);
+  if (flag_plot){
+    dacCurve(0,255,0,10);
+    delay(1000);
+    dacCurve(0,125,0,10);
+    flag_plot = false;
+  }
 }
 
 void handle_mixture2(){
   server.send(200, "text/html", HTML);
   Serial.println("Name:");
-  Serial.print(ListofMixture[1].name);
+  Serial.println(ListofMixture[1].name);
   Serial.println("Compound 1:");
-  Serial.print(ListofMixture[1].compounds[0]);
+  Serial.println(ListofMixture[1].compounds[0]);
   Serial.println("Compound 2:");
-  Serial.print(ListofMixture[1].compounds[1]);
+  Serial.println(ListofMixture[1].compounds[1]);
+  if (flag_plot) {
+    dacCurve(0,255,0,10);
+    delay(1000);
+    dacCurve(0,125,0,10);
+    flag_plot = false;
+  }
   //dacCurve(0,180,0,10);
 }
 
@@ -121,6 +131,12 @@ void handle_mixture3(){
   Serial.println(ListofMixture[2].compounds[0]);
   Serial.println("Compound 2:");
   Serial.println(ListofMixture[2].compounds[1]);
+  if (flag_plot) {
+    dacCurve(0,255,0,10);
+    delay(1000);
+    dacCurve(0,125,0,10);
+    flag_plot = false;
+  }
   //dacCurve(0,125,0,10);
 }
 
@@ -132,22 +148,13 @@ void handle_mixture4(){
   Serial.println(ListofMixture[3].compounds[0]);
   Serial.println("Compound 2:");
   Serial.println(ListofMixture[3].compounds[1]);
+  if (flag_plot) {
+    dacCurve(0,255,0,10);
+    delay(1000);
+    dacCurve(0,125,0,10);
+    flag_plot = false;
+  }
   //dacCurve(0,80,0,10);
-}
-
-void handle_mixture5(){
-  server.send(200, "text/html", HTML);
-  dacCurve(0,125,0,10);
-}
-
-void handle_mixture6(){
-  server.send(200, "text/html", HTML);
-  dacCurve(0,180,0,10);
-}
-
-void handle_mixture7(){
-  server.send(200, "text/html", HTML);
-  dacCurve(0,255,0,10);
 }
 
 void dacCurve(int start_point,int peak_point,int end_point,int delay_time){

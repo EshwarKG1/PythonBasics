@@ -31,15 +31,6 @@ function onStart() {\
   else if (document.getElementById('mixture4').checked){\
     pageStr = 'mixture4';\
   }\
-  else if (document.getElementById('mixture5').checked){\
-    pageStr = 'mixture5';\
-  }\
-  else if (document.getElementById('mixture6').checked){\
-    pageStr = 'mixture6';\
-  }\
-  else if (document.getElementById('mixture7').checked){\
-    pageStr = 'mixture7';\
-  }\
   window.location.href='/'+pageStr;\
 }\
 </script>\
