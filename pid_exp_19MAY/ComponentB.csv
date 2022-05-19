@@ -1,0 +1,13 @@
+Component Name,on/off,Peak RT,Windows,Resp Fact,Low Alarm,High Alarm
+benzene,Yes,5.5,8.0,1.00,0.00,0.00
+toluene,Yes,10.5,8.0,1.00,0.00,0.00
+hydrogen,Yes,15.5,8.0,1.00,0.00,0.00
+nitrogen,Yes,20.5,8.0,1.00,0.00,0.00
+oxygen,Yes,25.5,8.0,1.00,0.00,0.00
+Trans-Dichloropropene,Yes,30.2,0.01,1.00,0.00,0.00
+Toluene,Yes,36.2,0.01,1.00,0.00,0.00
+PerChloroEthylene,Yes,40.5,0.01,1.00,0.00,0.00
+ChloroBenzene,Yes,45.1,0.01,1.00,0.00,0.00
+Tri-chloroBenzene,Yes,50.6,0.01,1.00,0.00,0.00
+,,1.56,0.01,1.00,0.00,0.00
+,,2.78,0.01,1.00,0.00,0.00
